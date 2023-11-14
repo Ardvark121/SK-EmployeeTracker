@@ -23,7 +23,6 @@ function startpage() {
         choices: [
           "View All Employees",
           "Add Employee",
-          "Update Employee Role",
           "View All Roles",
           "Add Role",
           "View All Departments",
@@ -41,8 +40,6 @@ function startpage() {
         getrole();
       } else if (SelectedOption == "Add Employee") {
         addEmployee();
-      } else if (SelectedOption == "Update Employee Role") {
-        console.log("not yet");
       } else if (SelectedOption == "Add Role") {
         addRole();
       } else if (SelectedOption == "Add Departments") {
@@ -65,15 +62,16 @@ async function getdepartment() {
 }
 
 async function getrole() {
-  const results = await db.query("SELECT title FROM role");
-  const roleNames = results.map((row) => row.name);
+  const [results] = await db.query("SELECT title FROM role");
+  console.log(results);
+  const roleNames = results.map((row) => row.title);
   console.log(roleNames);
   startpage();
 }
 
 async function getemployee() {
-  const results = await db.query("SELECT first_name FROM employee");
-  const employeeNames = results.map((row) => row.name);
+  const [results] = await db.query("SELECT first_name FROM employee");
+  const employeeNames = results.map((row) => row.first_name);
   console.log(employeeNames);
   startpage();
 }
@@ -128,7 +126,7 @@ async function addRole() {
     [input.roleTitle, input.roleSalary, department_id]
   );
 
-  console.log("Role added successfully");
+  console.log("Role added successfully", result);
   startpage();
 }
 
@@ -158,6 +156,7 @@ async function addEmployee() {
   const [Role] = await db.query("SELECT id FROM role WHERE title = ?", [
     input.roleName,
   ]);
+  console.log([Role]);
   const role_id = Role[0].id;
 
   const [Manager] = await db.query(
